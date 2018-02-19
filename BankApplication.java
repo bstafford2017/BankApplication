@@ -1,606 +1,648 @@
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Scanner;
 
 /*
  * Bank Application
- * By: Benjamin Stafford
+ * @author Benjamin Stafford
+ * @version 1.1
  * 12/17/17
  */
 
-public class BankApplication {		// add + to everything deposit 
+public class BankApplication { // add + to everything deposit
 
 	// Setup static variables
-    static String ID = null;			
-    static double balance = 0;
-    static double totalFee = 0;
-    static String address = "C:\\Users\\Benjamin\\Dropbox\\JavaProject\\All Accounts\\accounts";
-    
-    // Setup data structures
-    static HashMap<String, String> map = new HashMap<String, String>();
-    
-    public static void main(String[] args) {
-        printMenu();
+	static String ID = null;
+	static double balance = 0;
+	static double totalFee = 0;
+	static String address = "C:\\Users\\Benjamin\\Dropbox\\JavaProject\\All Accounts\\accounts";
 
-        // Declare map, userInput, running, and sc
-        Scanner sc = new Scanner(System.in);
+	// Setup data structures
+	static HashMap<String, String> map = new HashMap<String, String>();
 
-        boolean running = true;
-        int userInput = sc.nextInt();
+	public static void main(String[] args) {
+		printMenu();
 
-        // Update map from file
-        openFile();
-        
-        // Loop for entering data to login
-        while (running) {
+		// Declare map, userInput, running, and sc
+		Scanner sc = new Scanner(System.in);
 
-            switch (userInput) {
-                case 1:
-                    login(sc);
-                    break;
-                case 2:
-                    createAccount(sc);
-                    break;
-                case 3:
-                    displayAll();
-                    break;
-                case 4:
-                    exit(sc);
-                    break;
-                default:
-                    System.out.print("Invalid Response. Please "
-                            + "Try Again.\nEnter Response: \n");
-                    break;
-            }
-            printMenu();
-            userInput = sc.nextInt();
-        }
+		boolean running = true;
+		int userInput = sc.nextInt();
 
-        // End of program
-        sc.close();
-    }
+		// Update map from file
+		openFile();
 
-    public static void printMenu() {
-        System.out.println("=========MAIN MENU==========");
-        System.out.println("1. Login In");
-        System.out.println("2. Create An Account");
-        System.out.println("3. Display All Accounts");
-        System.out.println("4. Exit Program");
-        System.out.println("============================");
-        System.out.print("Enter Response: ");
-    }
+		// Loop for entering data to login
+		while (running) {
 
-    public static void saveFile() {
+			switch (userInput) {
+				case 1:
+					login(sc);
+					break;
+				case 2:
+					createAccount(sc);
+					break;
+				case 3:
+					displayAll();
+					break;
+				case 4:
+					exit(sc);
+					break;
+				default:
+					System.out.print("Invalid Response. Please " + "Try Again.\nEnter Response: \n");
+					break;
+				}
+				printMenu();
+				userInput = sc.nextInt();
+		}
 
-        // Initializes file to null
-        File file = null;
-        PrintWriter pw = null;
+		// End of program
+		sc.close();
+	}
 
-        // For FileNotFound Exception
-        try {
-            file = new File(BankApplication.address);
-            pw = new PrintWriter(file);
-        } catch (Exception e) {
-            System.out.println("File Not Found.");
-        }
+	public static void printMenu() {
+		System.out.println("=========MAIN MENU==========");
+		System.out.println("1. Login In");
+		System.out.println("2. Create An Account");
+		System.out.println("3. Display All Accounts");
+		System.out.println("4. Exit Program");
+		System.out.println("============================");
+		System.out.print("Enter Response: ");
+	}
 
-        // Prints to data to accounts file
-        for (String number : BankApplication.map.keySet()) {
-            pw.println(number + " : " + BankApplication.map.get(number));
-        }
+	public static void saveFile() {
 
-        // Closes pw
-        pw.close();
+		// Initializes file to null
+		File file = null;
+		PrintWriter pw = null;
 
-    }
+		// For FileNotFound Exception
+		try {
+			file = new File(BankApplication.address);
+			pw = new PrintWriter(file);
+		} catch (Exception e) {
+			System.out.println("File Not Found.");
+		}
 
-    public static void openFile() {
+		// Prints to data to accounts file
+		for (String number : BankApplication.map.keySet()) {
+			pw.println(number + " : " + BankApplication.map.get(number));
+		}
 
-        // Initializes file and sc to null
-        File file = null;
-        Scanner sc = null;
+		// Closes pw
+		pw.close();
 
-        // For FileNotFound Exception
-        try {
-            file = new File(BankApplication.address);
-            sc = new Scanner(file);
-        } catch (Exception e) {
-            System.out.println("File Not Found");
-        }
+	}
 
-        // Takes data from file and puts in HashMap
-        while (sc.hasNextLine()) {
+	public static void openFile() {
 
-            String line = sc.nextLine();
-            String[] array = line.split(":");
-            array[0] = array[0].trim();
-            array[1] = array[1].trim();
+		// Initializes file and sc to null
+		File file = null;
+		Scanner sc = null;
 
-            // Set flag to stop while loop from putting in map
-            boolean flag = false;
+		// For FileNotFound Exception
+		try {
+			file = new File(BankApplication.address);
+			sc = new Scanner(file);
+		} catch (Exception e) {
+			System.out.println("File Not Found");
+		}
 
-            // Checks if there are duplicate accounts
-            for (String number : BankApplication.map.keySet()) {
-                if (array[0].equals(number)) {
-                    flag = true;
-                    continue;
-                }
-            }
-            if (flag == true) {
-                continue;
-            }
+		// Takes data from file and puts in HashMap
+		while (sc.hasNextLine()) {
 
-            // Puts data into map
-            BankApplication.map.put(array[0], array[1]);
-        }
+			String line = sc.nextLine();
+			String[] array = line.split(":");
+			array[0] = array[0].trim();
+			array[1] = array[1].trim();
 
-        // Closes sc
-        sc.close();
-    }
+			// Set flag to stop while loop from putting in map
+			boolean flag = false;
 
-    public static void displayAll() {
-        System.out.println("======ALL ACCOUNTS======");
-        System.out.println("ID : Password");
-        for (String number : BankApplication.map.keySet()) {
-            System.out.println(number + " : " + BankApplication.map.get(number));
-        }
-    }
+			// Checks if there are duplicate accounts
+			for (String number : BankApplication.map.keySet()) {
+				if (array[0].equals(number) || array[1].equals(BankApplication.map.get(number))) {
+					flag = true;
+					continue;
+				}
+			}
+			if (flag == true) {
+				continue;
+			}
 
-    public static void createAccount(Scanner sc) {
+			// Puts data into map
+			BankApplication.map.put(array[0], array[1]);
+		}
 
-        // Sets ID
-        System.out.print("Enter an ID: ");
-        String ID = sc.next();
-        ID = ID.trim();				// Trim for error checking
+		// Closes sc
+		sc.close();
+	}
 
-        // Sets password
-        System.out.print("Enter a Password: ");
-        String password = sc.next();
-        password = password.trim();		// Trim for error checking
-        BankApplication.map.put(ID, password);
-        System.out.println("============================");
-        System.out.println("Your account has been created for:\nID: " 
-                                    + ID + "\nPassword: " + password);
+	public static void displayAll() {
+		System.out.println("======ALL ACCOUNTS======");
+		System.out.println("ID : Password");
+		for (String number : BankApplication.map.keySet()) {
+			System.out.println(number + " : " + BankApplication.map.get(number));
+		}
+	}
 
-    }
+	public static void createAccount(Scanner sc) {
 
-    public static void login(Scanner sc) {
+		// Sets ID
+		System.out.print("Enter an ID: ");
+		String ID = sc.next();
+		ID = ID.trim(); // Trim for error checking
 
-        // Sets ID
-        System.out.print("Enter ID: ");
-        ID = sc.next();
-        ID = ID.trim();				// Trim for error checking
+		// Sets password
+		System.out.print("Enter a Password: ");
+		String password = sc.next();
+		password = password.trim(); // Trim for error checking
+		BankApplication.map.put(ID, password);
+		System.out.println("============================");
+		System.out.println("Your account has been created for:\nID: " + ID + "\nPassword: " + password);
 
-        // Sets password
-        System.out.print("Enter Password: ");
-        String password = sc.next();
-        password = password.trim();		// Trim for error checking
+	}
 
-        // Sets flag and running
-        boolean flag = false;
-        boolean running = true;
+	public static void login(Scanner sc) {
 
-        while(running) {
-	        for (String number : BankApplication.map.keySet()) {
-	
-	            // ID and Password validation
-	            if (ID.equals(number)) {
-	                if (password.equals(BankApplication.map.get(number))) {
-	                    System.out.println("============================");
-	                    System.out.println("You successfully logged in!");
-	                    saveFile();										
-	                    String[] args = {"1"};
-	                    BankApplicationMenu.main(args);
-	                    running = false;
-	                    flag = true;
-	                }
-	            }
-	        }
-	
-	        if (flag == false) {
-	            System.out.println("============================");
-	            System.out.print("Invalid Login. Please Try Again."
-	                    + "\n============================\nEnter ID: ");
-	            ID = sc.next();
-	            ID = ID.trim();                 // Trim for error checking
-	
-	            System.out.print("Enter Password: ");
-	            password = sc.next();
-	            password = password.trim();     // Trim for error checking
-	        }
-        }
-    }
+		// Sets ID
+		System.out.print("Enter ID: ");
+		ID = sc.next();
+		ID = ID.trim(); // Trim for error checking
 
-    public static void exit(Scanner sc) {
-        System.out.println("============================");
-        System.out.println("Want to save before exitting? (Y or N)");
-        System.out.println("============================");
-        System.out.print("Enter Response: ");
-        String response = sc.next();
-        while (true) {
-            if (response.equals("Y") || response.equals("y")) {
-                saveFile();
-                System.exit(0);
-            } else if (response.equals("N") || response.equals("n")) {
-                System.exit(0);
-            } else {
-                System.out.println("Invalid Response. Please try again."
-                        + "\nEnter Response: ");
-                response = sc.next();
-            }
-        }
-    }
+		// Sets password
+		System.out.print("Enter Password: ");
+		String password = sc.next();
+		password = password.trim(); // Trim for error checking
+
+		// Sets flag and running
+		boolean flag = false;
+		boolean running = true;
+
+		while (running) {
+			for (String number : BankApplication.map.keySet()) {
+
+				// ID and Password validation
+				if (ID.equals(number)) {
+					if (password.equals(BankApplication.map.get(number))) {
+						System.out.println("============================");
+						System.out.println("You successfully logged in!");
+						saveFile();
+						String[] args = { "1" };
+						BankApplicationMenu.main(args);
+						running = false;
+						flag = true;
+					}
+				}
+			}
+
+			if (flag == false) {
+				System.out.println("============================");
+				System.out.print("Invalid Login. Please Try Again." + "\n============================\nEnter ID: ");
+				ID = sc.next();
+				ID = ID.trim(); // Trim for error checking
+
+				System.out.print("Enter Password: ");
+				password = sc.next();
+				password = password.trim(); // Trim for error checking
+			}
+		}
+	}
+
+	public static void exit(Scanner sc) {
+		System.out.println("============================");
+		System.out.println("Want to save before exitting? (Y or N)");
+		System.out.println("============================");
+		System.out.print("Enter Response: ");
+		String response = sc.next();
+		while (true) {
+			if (response.equals("Y") || response.equals("y")) {
+				saveFile();
+				System.exit(0);
+			} else if (response.equals("N") || response.equals("n")) {
+				System.exit(0);
+			} else {
+				System.out.println("Invalid Response. Please try again." + "\nEnter Response: ");
+				response = sc.next();
+			}
+		}
+	}
 }
 
 class BankApplicationMenu extends BankApplication {
 
-    public static void main(String[] args) {
-        ArrayList<Double> list = new ArrayList<Double>();
+	public static void main(String[] args) {
+		ArrayList<Double> list = new ArrayList<Double>();
+		ArrayList<String> dateList = new ArrayList<String>();
+		
+		Date date = new Date();
 
-        // Update ArrayList from file
-        list = openFile(list);
+		// Update ArrayList from file
+		openFile(list, dateList);
 
-        // Calculates balance every loop
-        for (int i = 0; i < list.size(); i++) {
-            BankApplication.balance += list.get(i);
-        }
-        printMenu();
+		// Calculates balance every loop
+		for (int i = 0; i < list.size(); i++) {
+			BankApplication.balance += list.get(i);
+		}
+		printMenu();
 
-        // Declare list, userInput, running, balance, and sc
-        Scanner sc = new Scanner(System.in);
-        boolean running = true;
-        int userInput = sc.nextInt();
+		// Declare list, userInput, running, balance, and sc
+		Scanner sc = new Scanner(System.in);
+		boolean running = true;
+		int userInput = sc.nextInt();
 
-        while (running) { 
-            switch (userInput) {
-                case 1:
-                    deposit(sc, list);
-                    break;
-                case 2:
-                    withdraw(sc, list);
-                    break;
-                case 3:
-                    searchTransactions(sc, list);
-                    break;
-                case 4:
-                    displayAll(list);
-                    break;
-                case 5:
-                    changeID(sc);
-                    break;
-                case 6:
-                    changePassword(sc, list);
-                    break;
-                case 7:
-                	deleteAccount(sc,list);
-                	break;
-                case 8:
-                    exit(running, sc, list);
-                    break;
-                default:
-                    System.out.print("Invalid Response. Please Try Again."
-                            + "\nEnter Response: ");
-                    break;
-            }
+		while (running) {
+			switch (userInput) {
+				case 1:
+					deposit(sc, list, dateList, date);
+					break;
+				case 2:
+					withdraw(sc, list, dateList, date);
+					break;
+				case 3:
+					searchTransactions(sc, list, dateList);
+					break;
+				case 4:
+					displayAll(list, dateList);
+					break;
+				case 5:
+					changeID(sc, list);
+					break;
+				case 6:
+					changePassword(sc, list);
+					break;
+				case 7:
+					deleteAccount(sc, list);
+					break;
+				case 8:
+					exit(running, sc, list, dateList, date);
+					break;
+				default:
+					System.out.print("Invalid Response. Please Try Again." + "\nEnter Response: ");
+					break;
+			}
 
-            printMenu();
+			printMenu();
 
-            // Accept new response every loop
-            userInput = sc.nextInt();
-        }
+			// Accept new response every loop
+			userInput = sc.nextInt();
+		}
 
-        // End of program
-        sc.close();
-    }
+		// End of program
+		sc.close();
+	}
 
-    public static void printMenu() {
-        System.out.println("========YOUR ACCOUNT========");
-        System.out.println("\tID: " + BankApplication.ID);
-        System.out.printf("Available Balance: %.2f\n", BankApplication.balance);
-        System.out.println("1. Deposit");
-        System.out.println("2. Withdrawal");
-        System.out.println("3. Search for a Transaction ");
-        System.out.println("4. Display All Transactions");
-        System.out.println("5. Change ID");
-        System.out.println("6. Change Password");
-        System.out.println("7. Delete Account");
-        System.out.println("8. Logout");
-        System.out.println("============================");
-        System.out.print("Enter Response: ");
-    }
+	public static void printMenu() {
+		System.out.println("========YOUR ACCOUNT========");
+		System.out.println("\tID: " + BankApplication.ID);
+		System.out.printf("Available Balance: %.2f\n", BankApplication.balance);
+		System.out.println("1. Deposit");
+		System.out.println("2. Withdrawal");
+		System.out.println("3. Search for a Transaction ");
+		System.out.println("4. Display All Transactions");
+		System.out.println("5. Change ID");
+		System.out.println("6. Change Password");
+		System.out.println("7. Delete Account");
+		System.out.println("8. Logout");
+		System.out.println("============================");
+		System.out.print("Enter Response: ");
+	}
 
-    public static void deposit(Scanner sc, ArrayList<Double> list) {
+	public static void deposit(Scanner sc, ArrayList<Double> list, ArrayList<String> dateList, Date date) {
 
-        // Initialize balance
-        System.out.print("Enter the amount you want to deposit: ");
-        double deposit = sc.nextDouble();
+		// Initialize balance
+		System.out.print("Enter the amount you want to deposit: ");
+		double deposit = sc.nextDouble();
 
-        // Set fee of 5% per transaction
-        double fee = 0.05;
-        double feeAmount = deposit * fee;
-        deposit = deposit - feeAmount;
-        System.out.printf("Fee for transaction amount: %.2f\n", feeAmount);
-        System.out.printf("Are you sure you want to deposit %.2f? (Y or N):\n", deposit);
-        String check = sc.next();
+		// Set fee of 5% per transaction
+		double fee = 0.05;
+		double feeAmount = deposit * fee;
+		deposit = deposit - feeAmount;
+		System.out.printf("Fee for transaction amount: %.2f\n", feeAmount);
+		System.out.printf("Are you sure you want to deposit %.2f? (Y or N):\n", deposit);
+		String check = sc.next();
 
-        // Verify if Y or N
-        while (true) {
-            if (check.equals("y") || check.equals("Y")) {
-                if (deposit > 0) {
-                    list.add(deposit);
-                    System.out.printf("Your deposit of %.2f was successful!\n", deposit);
-                    
-                    // Collectively adds fees
-                    BankApplication.totalFee += feeAmount;
-                    return;
-                } else {
-                    System.out.println("Your deposit is not a positive amount.");
-                    return;
-                }
-            } else if (check.equals("n") || check.equals("N")) {
-                return;
-            } else {
-                System.out.println("Invalid Response. Please try again."
-                        + "\nEnter Response: ");
-                check = sc.next();
-            }
-        }
-    }
+		// Verify if Y or N
+		while (true) {
+			if (check.equals("y") || check.equals("Y")) {
+				if (deposit > 0) {
+					list.add(deposit);
+					dateList.add(date.toString());
+					System.out.printf("Your deposit of %.2f was successful!\n", deposit);
 
-    public static void withdraw(Scanner sc, ArrayList<Double> list) {
+					// Collectively adds fees
+					BankApplication.totalFee += feeAmount;
+					return;
+				} else {
+					System.out.println("Your deposit is not a positive amount.");
+					return;
+				}
+			} else if (check.equals("n") || check.equals("N")) {
+				return;
+			} else {
+				System.out.println("Invalid Response. Please try again." + "\nEnter Response: ");
+				check = sc.next();
+			}
+		}
+	}
 
-        // Initialize
-        System.out.print("Enter the amount you want to withdraw: ");
-        double withdraw = sc.nextDouble();
-        System.out.print("Are you sure you want to withdraw "
-                + withdraw + " ? (Y or N)");
-        String check = sc.next();
+	public static void withdraw(Scanner sc, ArrayList<Double> list, ArrayList<String> dateList, Date date) {
 
-        // Verify balance > 0
-        double newBalance = BankApplication.balance - withdraw;
+		// Initialize
+		System.out.print("Enter the amount you want to withdraw: ");
+		double withdraw = sc.nextDouble();
+		System.out.print("Are you sure you want to withdraw " + withdraw + " ? (Y or N)");
+		String check = sc.next();
 
-        // Verify if Y or N 
-        // edit to repeat to verify
-        while (true) {
-            if (check.equals("y") || check.equals("Y")) {
-                if (newBalance >= 0) {					
-                    withdraw = withdraw - (withdraw * 2);
-                    list.add(withdraw);
-                    System.out.println("Your withdrawal of " + withdraw 
-                            + " was successful!");
-                    BankApplication.balance = newBalance;
-                    return;
-                } 
-                else {
-                    System.out.println("Insufficient funds.");
-                }
-                return;
-            } 
-            else if (check.equals("n") || check.equals("N")) {
-                return;
-            } 
-            else {
-                System.out.print("Invalid Response. Please try again."
-                        + "\nEnter Response: ");
-                check = sc.next();
-            }
-        }
-    }
+		// Verify balance > 0
+		double newBalance = BankApplication.balance - withdraw;
 
-    public static ArrayList<Double> openFile(ArrayList<Double> list) {
+		// Verify if Y or N
+		// edit to repeat to verify
+		while (true) {
+			if (check.equals("y") || check.equals("Y")) {
+				if (newBalance >= 0) {
+					withdraw = withdraw - (withdraw * 2);
+					list.add(withdraw);
+					dateList.add(date.toString());
+					System.out.println("Your withdrawal of " + withdraw + " was successful!");
+					BankApplication.balance = newBalance;
+					return;
+				} 
+				else {
+					System.out.println("Insufficient funds.");
+				}
+			} 
+			else if (check.equals("n") || check.equals("N")) {
+				return;
+			} 
+			else {
+				System.out.print("Invalid Response. Please try again." + "\nEnter Response: ");
+				check = sc.next();
+			}
+		}
+	}
 
-        // Initialize fileName from other class 
-        String fileName = BankApplication.ID;
+	public static void openFile(ArrayList<Double> list, ArrayList<String> dateList) {
 
-        // Sets up file and sets newSC to null
-        File file = new File(fileName);
-        Scanner newSC = null;
+		// Initialize fileName from other class
+		String fileName = BankApplication.ID;
 
-        // Verify if file exists
-        if (!file.exists()) {
-            return list;
-        }
+		// Sets up file and sets newSC to null
+		File file = new File(fileName);
+		Scanner newSC = null;
 
-        // For FileNotFound Exception
-        try {
-            newSC = new Scanner(file);
-        } catch (Exception e) {
-            System.out.println("File Not Found");
-        }
+		// Verify if file exists
+		if (!file.exists()) {
+			return;
+		}
 
-        // Verify if file hasNextLine()
-        if (!newSC.hasNext()) {
-            return list;
-        }
+		// For FileNotFound Exception
+		try {
+			newSC = new Scanner(file);
+		} catch (Exception e) {
+			System.out.println("File Not Found");
+		}
 
-        // Puts file data into ArrayList
-        while (newSC.hasNext()) {
-            double transaction = newSC.nextDouble();
-            list.add(transaction);
-        }
+		// Verify if file hasNextLine()
+		if (!newSC.hasNext()) {
+			return;
+		}
 
-        // Close newSC and return
-        newSC.close();
-        return list;
-    }
+		// Puts file data into ArrayList
+		while (newSC.hasNext()) {
+			String line = newSC.nextLine();
+			String[] temp = line.split(":");
+			
+			// Add transaction amount and date to ArrayLists
+			list.add(Double.parseDouble(temp[0]));
+			dateList.add(temp[1] + ":" + temp[2] + ":" + temp[3]);
+		}
 
-    public static void saveFile(Scanner sc, ArrayList<Double> list) {
+		// Close newSC and return
+		newSC.close();
+	}
 
-        // Declare fileName from ID in BankApplication class
-        String fileName = BankApplication.ID;
-        PrintWriter pw = null;
+	public static void saveFile(Scanner sc, ArrayList<Double> list, ArrayList<String> dateList, Date date) {
 
-        // For FileNotFound Exception
-        try {
-            pw = new PrintWriter(new File(fileName));
-        } catch (Exception E) {
-            System.out.println("Invalid File.");
-        }
+		// Declare fileName from ID in BankApplication class
+		String fileName = BankApplication.ID;
+		PrintWriter pw = null;
 
-        // Prints transaction amount to ID fileName
-        for (int i = 0; i < list.size(); i++) {
-            pw.printf("%.2f\n", list.get(i));
-        }
+		// For FileNotFound Exception
+		try {
+			pw = new PrintWriter(new File(fileName));
+		} catch (Exception E) {
+			System.out.println("Invalid File.");
+		}
 
-        // Closes pw
-        pw.close();
-    }
+		// Prints transaction amount to ID fileName
+		for (int i = 0; i < list.size(); i++) {
+			pw.printf("%.2f:%s\n", list.get(i), dateList.get(i));
+		}
 
-    public static void searchTransactions(Scanner sc, ArrayList<Double> list) {
+		// Closes pw
+		pw.close();
+	}
 
-        // Initialize balance
-        double balance = 0;
-        System.out.print("Enter the Transaction #: ");
-        int valueToFind = sc.nextInt();
+	public static void searchTransactions(Scanner sc, ArrayList<Double> list, ArrayList<String> dateList) {
 
-        // Error checking for negative values and out of bounds values 
-        if (valueToFind > list.size() && valueToFind > 0) {
-            System.out.print("There are not " + valueToFind 
-                    + " transactions in your account. Please try again."
-                    + "\nEnter Response: ");
-            valueToFind = sc.nextInt();
-        }
+		// Initialize balance
+		double balance = 0;
+		System.out.print("Enter the Transaction #: ");
+		int valueToFind = sc.nextInt();
 
-        // Sets balance from file
-        for (int i = 0; i < valueToFind; i++) {
-            balance += list.get((i));
-        }
-        // Prints search to screen
-        System.out.printf("Transaction #: %d\nTransaction amount: %.2f"
-                + "\nBalance after transaction: %.2f\n", valueToFind,
-                list.get((valueToFind - 1)), balance);
+		// Error checking for negative values and out of bounds values
+		if (valueToFind > list.size() && valueToFind > 0) {
+			System.out.print("There are not " + valueToFind + " transactions in your account. Please try again."
+					+ "\nEnter Response: ");
+			valueToFind = sc.nextInt();
+		}
 
-    }
+		// Sets balance from file
+		for (int i = 0; i < valueToFind; i++) {
+			balance += list.get((i));
+		}
+		
+		// Prints search to screen
+		System.out.printf("Transaction #: %d\nTransaction amount: %.2f" + "\nBalance after transaction: %.2f\n"
+				+ "Date of transaction: %s\n", valueToFind, list.get((valueToFind - 1)), balance, dateList.get(valueToFind-1));
 
-    public static void displayAll(ArrayList<Double> list) {
+	}
 
-        // Initialize balance
-        double balance = 0;
-        System.out.println("======ALL TRANSACTIONS======");
+	public static void displayAll(ArrayList<Double> list, ArrayList<String> dateList) {
 
-        // Prints data to screen
-        for (int i = 0; i < list.size(); i++) {
-            balance += list.get(i);
-            System.out.printf("Transaction #: %d\nTransaction amount: %.2f"
-            + "\nBalance after transaction: %.2f\n", i + 1, list.get(i), balance);
-            if (i == (list.size() - 1))
-                System.out.println("============================");
-            else
-            	System.out.println();
-        }
-    }
+		// Initialize balance
+		double balance = 0;
+		System.out.println("======ALL TRANSACTIONS======");
 
-    public static void changeID(Scanner sc) {
+		// Prints data to screen
+		for (int i = 0; i < list.size(); i++) {
+			balance += list.get(i);
+			System.out.printf("Transaction #: %d\nTransaction amount: %.2f" 
+					+ "\nBalance after transaction: %.2f\n" + 
+					"Date of Transaction: %s\n", i + 1, list.get(i), balance, dateList.get(i)); // add date to commas
+			if (i == (list.size() - 1))
+				System.out.println("============================");
+			else
+				System.out.println();
+		}
+	}
 
-        // Set new ID
-        System.out.print("Enter new ID: ");
-        BankApplication.ID = sc.next();
-        System.out.println("You successfully changed your ID to " + 
-                BankApplication.ID + "!");
 
-    }
+	public static void changeID(Scanner sc, ArrayList<Double> list) {
 
-    public static void changePassword(Scanner sc, ArrayList<Double> list) {		
+		// Set ID
+		System.out.print("Enter ID: ");
+		String userInput = sc.next();
+		userInput = userInput.trim(); // Trim for error checking
 
-        // Set ID
-        System.out.print("Enter ID: ");
-        String userInput = sc.next();
-        userInput = userInput.trim();   // Trim for error checking
+		// Set password
+		System.out.print("Enter Password: ");
+		String password = sc.next();
+		password = password.trim(); // Trim for error checking
 
-        // Set password
-        System.out.print("Enter Password: ");
-        String password = sc.next();
-        password = password.trim();	// Trim for error checking
+		// Sets flag
+		boolean running = true;
 
-        // Sets flag
-        boolean running = true;
+		while (running) {
+			for (String number : BankApplication.map.keySet()) {
 
-        while (running) {
-            for (String number : BankApplication.map.keySet()) {
+				// ID and Password validation
+				if (userInput.equals(number)) {
+					if (password.equals(BankApplication.map.get(number))) {
+						
+						// Remove old account
+						BankApplication.map.remove(userInput);
+						
+						// Set new ID
+						System.out.print("Enter new ID: ");
+						userInput = sc.next();
 
-                // ID and Password validation
-                if (userInput.equals(number)) {
-                    if (password.equals(BankApplication.map.get(number))) {
-                        System.out.print("Enter new password: ");
-                    }
-                    password = sc.next();
-                    
-                    // Update old data
-                    BankApplication.map.put(BankApplication.ID, password);	
-                    System.out.println("You successfully changed your password to "
-                            + BankApplication.map.get(BankApplication.ID) + "!");
-                    running = false;
-                    break;
-                } else {
-                    System.out.println("============================");
-                    System.out.print("Invalid Login. Please Try Again.\n");
-                    System.out.print("============================\nEnter ID: ");
-                    BankApplication.ID = sc.next();
-                    BankApplication.ID = BankApplication.ID.trim();
-                    System.out.print("Enter Password: ");
-                    password = sc.next();
-                    password = password.trim();
-                }
-            }
-        }
-    }
-    
-    public static void deleteAccount(Scanner sc, ArrayList<Double> list) {
-    	
-    	// Initialize userInput and running
-    	System.out.print("Are you sure you want to delete your account? (Y or N)");
-    	String userInput = sc.nextLine();
-    	userInput = sc.nextLine();
-    	boolean running = true;
-    	
-    	while(running) {
-	    	if(userInput.equals("Y") || userInput.equals("y")) {
-	    		
-	    		// Initialize file
-	    		File file = null;
-	    		try {
-	    		file = new File("C:\\Users\\Benjamin\\Dropbox\\JavaProject");
-	    		}
-	    		catch(Exception e) {
-	    			System.out.println("File Not Found");
-	    		}
-	    		
-	    		if(file.exists()) {
-	    			file.delete();
-	    		}
-	    		
-	    		BankApplication.map.remove(BankApplication.ID);
-	    		System.exit(0);
-	    	}
-	    	else if(userInput.equals("N") || userInput.equals("n")) {
-	    		return;
-	    	}
-	    	else {
-	    		System.out.println("Invalid Response. Please Try Again.");
-	    		System.out.print("Enter Response: ");
-	    		userInput = sc.nextLine();
-	    	}
-    	}
-    }
-    
+						// Update old data
+						BankApplication.map.put(userInput, password);
+						BankApplication.ID = userInput;
+						System.out.println("You successfully changed your ID to "
+								+ BankApplication.ID + "!");
+						running = false;
+						break;
+					}
+					else {
+						System.out.println("============================");
+						System.out.print("Invalid Login. Please Try Again.\n");
+						System.out.print("============================\nEnter ID: ");
+						userInput = sc.next();
+						userInput = userInput.trim();
+						System.out.print("Enter Password: ");
+						password = sc.next();
+						password = password.trim();
+					}
+				}
+			}
+		}
+	}
 
-    public static void exit(boolean running, Scanner sc, ArrayList<Double> list) {
-        System.out.println("============================");
-        System.out.println("Want to save before exitting? (Y or N)");
-        System.out.println("============================");
-        System.out.print("Enter Response: ");
-        String response = sc.next();
-        
-        // Parameter for main
-        String[] args = {"1"};	
-        
-        if (response.equals("Y") || response.equals("y")) {
-            saveFile(sc, list);	
-            BankApplication.main(args);     
-        } else {
-            BankApplication.main(args);     
-        }
-    }
+	public static void changePassword(Scanner sc, ArrayList<Double> list) {
+	
+		// Set ID
+		System.out.print("Enter ID: ");
+		String userInput = sc.next();
+		userInput = userInput.trim(); // Trim for error checking
+	
+		// Set password
+		System.out.print("Enter Password: ");
+		String password = sc.next();
+		password = password.trim(); // Trim for error checking
+	
+		// Sets flag
+		boolean running = true;
+	
+		while (running) {
+			for (String number : BankApplication.map.keySet()) {
+	
+				// ID and Password validation
+				if (userInput.equals(number)) {
+					if (password.equals(BankApplication.map.get(number))) {
+						
+						// Set new Password
+						System.out.print("Enter new password: ");
+						password = sc.next();
+	
+						// Update old data
+						BankApplication.map.put(BankApplication.ID, password);
+						System.out.println("You successfully changed your password to "
+								+ BankApplication.map.get(BankApplication.ID) + "!");
+						running = false;
+						return;
+					}
+					else {
+						System.out.println("============================");
+						System.out.print("Invalid Login. Please Try Again.\n");
+						System.out.print("============================\nEnter ID: ");
+						userInput = sc.next();
+						userInput = userInput.trim();
+						System.out.print("Enter Password: ");
+						password = sc.next();
+						password = password.trim();
+					}
+				}
+			}
+		}
+	}
+
+	public static void deleteAccount(Scanner sc, ArrayList<Double> list) {
+
+		// Initialize userInput and running
+		System.out.print("Are you sure you want to delete your account? (Y or N)");
+		String userInput = sc.nextLine();
+		userInput = sc.nextLine();
+		boolean running = true;
+
+		while (running) {
+			if (userInput.equals("Y") || userInput.equals("y")) {
+
+				// Initialize file
+				File file = null;
+				try {
+					file = new File("C:\\Users\\Benjamin\\Dropbox\\JavaProject");
+				} catch (Exception e) {
+					System.out.println("File Not Found");
+				}
+
+				if (file.exists()) {
+					file.delete();
+				}
+
+				BankApplication.map.remove(BankApplication.ID);		// delete file with ID name
+				System.exit(0);
+			} else if (userInput.equals("N") || userInput.equals("n")) {
+				return;
+			} else {
+				System.out.println("Invalid Response. Please Try Again.");
+				System.out.print("Enter Response: ");
+				userInput = sc.nextLine();
+			}
+		}
+	}
+
+	public static void exit(boolean running, Scanner sc, ArrayList<Double> list, ArrayList<String> dateList, Date date) {
+		System.out.println("============================");
+		System.out.println("Want to save before exitting? (Y or N)");
+		System.out.println("============================");
+		System.out.print("Enter Response: ");
+		String response = sc.next();
+
+		// Parameter for main
+		String[] args = { "1" };
+
+		if (response.equals("Y") || response.equals("y")) {
+			saveFile(sc, list, dateList, date);
+			BankApplication.main(args);
+		} else {
+			BankApplication.main(args);
+		}
+	}
 }
