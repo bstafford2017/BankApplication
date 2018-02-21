@@ -8,7 +8,7 @@ import java.util.Scanner;
 /*
  * Bank Application
  * @author Benjamin Stafford
- * @version 1.1
+ * @version 1.2
  * 12/17/17
  */
 
@@ -39,24 +39,24 @@ public class BankApplication { // add + to everything deposit
 		while (running) {
 
 			switch (userInput) {
-				case 1:
-					login(sc);
-					break;
-				case 2:
-					createAccount(sc);
-					break;
-				case 3:
-					displayAll();
-					break;
-				case 4:
-					exit(sc);
-					break;
-				default:
-					System.out.print("Invalid Response. Please " + "Try Again.\nEnter Response: \n");
-					break;
-				}
-				printMenu();
-				userInput = sc.nextInt();
+			case 1:
+				login(sc);
+				break;
+			case 2:
+				createAccount(sc);
+				break;
+			case 3:
+				displayAll();
+				break;
+			case 4:
+				exit(sc);
+				break;
+			default:
+				System.out.print("Invalid Response. Please " + "Try Again.\nEnter Response: \n");
+				break;
+			}
+			printMenu();
+			userInput = sc.nextInt();
 		}
 
 		// End of program
@@ -237,7 +237,7 @@ class BankApplicationMenu extends BankApplication {
 	public static void main(String[] args) {
 		ArrayList<Double> list = new ArrayList<Double>();
 		ArrayList<String> dateList = new ArrayList<String>();
-		
+
 		Date date = new Date();
 
 		// Update ArrayList from file
@@ -256,33 +256,33 @@ class BankApplicationMenu extends BankApplication {
 
 		while (running) {
 			switch (userInput) {
-				case 1:
-					deposit(sc, list, dateList, date);
-					break;
-				case 2:
-					withdraw(sc, list, dateList, date);
-					break;
-				case 3:
-					searchTransactions(sc, list, dateList);
-					break;
-				case 4:
-					displayAll(list, dateList);
-					break;
-				case 5:
-					changeID(sc, list);
-					break;
-				case 6:
-					changePassword(sc, list);
-					break;
-				case 7:
-					deleteAccount(sc, list);
-					break;
-				case 8:
-					exit(running, sc, list, dateList, date);
-					break;
-				default:
-					System.out.print("Invalid Response. Please Try Again." + "\nEnter Response: ");
-					break;
+			case 1:
+				deposit(sc, list, dateList, date);
+				break;
+			case 2:
+				withdraw(sc, list, dateList, date);
+				break;
+			case 3:
+				searchTransactions(sc, list, dateList);
+				break;
+			case 4:
+				displayAll(list, dateList);
+				break;
+			case 5:
+				changeID(sc, list);
+				break;
+			case 6:
+				changePassword(sc, list);
+				break;
+			case 7:
+				deleteAccount(sc, list);
+				break;
+			case 8:
+				exit(running, sc, list, dateList, date);
+				break;
+			default:
+				System.out.print("Invalid Response. Please Try Again." + "\nEnter Response: ");
+				break;
 			}
 
 			printMenu();
@@ -317,7 +317,7 @@ class BankApplicationMenu extends BankApplication {
 		System.out.print("Enter the amount you want to deposit: ");
 		double deposit = sc.nextDouble();
 
-		// Set fee of 5% per transaction
+		// Set fee of 5% per transaction							NOT ADDING balance
 		double fee = 0.05;
 		double feeAmount = deposit * fee;
 		deposit = deposit - feeAmount;
@@ -329,20 +329,31 @@ class BankApplicationMenu extends BankApplication {
 		while (true) {
 			if (check.equals("y") || check.equals("Y")) {
 				if (deposit > 0) {
+					
+					// Adds to list and dateList
 					list.add(deposit);
 					dateList.add(date.toString());
+					
+					// Prints to screen
 					System.out.printf("Your deposit of %.2f was successful!\n", deposit);
 
 					// Collectively adds fees
 					BankApplication.totalFee += feeAmount;
+					
+					// Updates balance
+					BankApplication.balance += deposit;
+					
 					return;
-				} else {
+				}
+				else {
 					System.out.println("Your deposit is not a positive amount.");
 					return;
 				}
-			} else if (check.equals("n") || check.equals("N")) {
+			}
+			else if (check.equals("n") || check.equals("N")) {
 				return;
-			} else {
+			}
+			else {
 				System.out.println("Invalid Response. Please try again." + "\nEnter Response: ");
 				check = sc.next();
 			}
@@ -356,6 +367,7 @@ class BankApplicationMenu extends BankApplication {
 		double withdraw = sc.nextDouble();
 		System.out.print("Are you sure you want to withdraw " + withdraw + " ? (Y or N)");
 		String check = sc.next();
+		boolean noBalance = false;
 
 		// Verify balance > 0
 		double newBalance = BankApplication.balance - withdraw;
@@ -365,24 +377,37 @@ class BankApplicationMenu extends BankApplication {
 		while (true) {
 			if (check.equals("y") || check.equals("Y")) {
 				if (newBalance >= 0) {
+					
+					// Makes withdrawal in list negative
 					withdraw = withdraw - (withdraw * 2);
+					
+					// Adds to list and dateList
 					list.add(withdraw);
 					dateList.add(date.toString());
+					
+					// Prints to screen
 					System.out.println("Your withdrawal of " + withdraw + " was successful!");
+					
+					// Update balance
 					BankApplication.balance = newBalance;
+					
 					return;
-				} 
-				else {
-					System.out.println("Insufficient funds.");
 				}
-			} 
+				else {
+					noBalance = true;
+					break;
+				}
+			}
 			else if (check.equals("n") || check.equals("N")) {
 				return;
-			} 
+			}
 			else {
 				System.out.print("Invalid Response. Please try again." + "\nEnter Response: ");
 				check = sc.next();
 			}
+		}
+		if(noBalance == true) {
+			System.out.println("Insufficient funds.");
 		}
 	}
 
@@ -416,7 +441,7 @@ class BankApplicationMenu extends BankApplication {
 		while (newSC.hasNext()) {
 			String line = newSC.nextLine();
 			String[] temp = line.split(":");
-			
+
 			// Add transaction amount and date to ArrayLists
 			list.add(Double.parseDouble(temp[0]));
 			dateList.add(temp[1] + ":" + temp[2] + ":" + temp[3]);
@@ -466,32 +491,34 @@ class BankApplicationMenu extends BankApplication {
 		for (int i = 0; i < valueToFind; i++) {
 			balance += list.get((i));
 		}
-		
+
 		// Prints search to screen
-		System.out.printf("Transaction #: %d\nTransaction amount: %.2f" + "\nBalance after transaction: %.2f\n"
-				+ "Date of transaction: %s\n", valueToFind, list.get((valueToFind - 1)), balance, dateList.get(valueToFind-1));
+		System.out.printf(
+				"Transaction #: %d\nTransaction amount: %.2f" + "\nBalance after transaction: %.2f\n"
+						+ "Date of transaction: %s\n",
+				valueToFind, list.get((valueToFind - 1)), balance, dateList.get(valueToFind - 1));
 
 	}
 
 	public static void displayAll(ArrayList<Double> list, ArrayList<String> dateList) {
 
-		// Initialize balance
-		double balance = 0;
-		System.out.println("======ALL TRANSACTIONS======");
+		if (list.size() != 0) {
+			// Initialize balance
+			double balance = 0;
+			System.out.println("======ALL TRANSACTIONS======");
+			System.out.printf("Transaction Number  Transaction Amount  Balance     Date\n");
 
-		// Prints data to screen
-		for (int i = 0; i < list.size(); i++) {
-			balance += list.get(i);
-			System.out.printf("Transaction #: %d\nTransaction amount: %.2f" 
-					+ "\nBalance after transaction: %.2f\n" + 
-					"Date of Transaction: %s\n", i + 1, list.get(i), balance, dateList.get(i)); // add date to commas
-			if (i == (list.size() - 1))
-				System.out.println("============================");
-			else
-				System.out.println();
+			// Prints data to screen
+			for (int i = 0; i < list.size(); i++) {
+				balance += list.get(i);
+				System.out.printf("%-20d%-20.2f%-12.2f%s\n", i + 1, list.get(i), balance, dateList.get(i));
+				if (i == (list.size() - 1))
+					System.out.println("============================");
+			}
+		} else {
+			System.out.println("You have no transactions.");
 		}
 	}
-
 
 	public static void changeID(Scanner sc, ArrayList<Double> list) {
 
@@ -514,10 +541,10 @@ class BankApplicationMenu extends BankApplication {
 				// ID and Password validation
 				if (userInput.equals(number)) {
 					if (password.equals(BankApplication.map.get(number))) {
-						
+
 						// Remove old account
 						BankApplication.map.remove(userInput);
-						
+
 						// Set new ID
 						System.out.print("Enter new ID: ");
 						userInput = sc.next();
@@ -525,12 +552,10 @@ class BankApplicationMenu extends BankApplication {
 						// Update old data
 						BankApplication.map.put(userInput, password);
 						BankApplication.ID = userInput;
-						System.out.println("You successfully changed your ID to "
-								+ BankApplication.ID + "!");
+						System.out.println("You successfully changed your ID to " + BankApplication.ID + "!");
 						running = false;
 						break;
-					}
-					else {
+					} else {
 						System.out.println("============================");
 						System.out.print("Invalid Login. Please Try Again.\n");
 						System.out.print("============================\nEnter ID: ");
@@ -546,39 +571,38 @@ class BankApplicationMenu extends BankApplication {
 	}
 
 	public static void changePassword(Scanner sc, ArrayList<Double> list) {
-	
+
 		// Set ID
 		System.out.print("Enter ID: ");
 		String userInput = sc.next();
 		userInput = userInput.trim(); // Trim for error checking
-	
+
 		// Set password
 		System.out.print("Enter Password: ");
 		String password = sc.next();
 		password = password.trim(); // Trim for error checking
-	
+
 		// Sets flag
 		boolean running = true;
-	
+
 		while (running) {
 			for (String number : BankApplication.map.keySet()) {
-	
+
 				// ID and Password validation
 				if (userInput.equals(number)) {
 					if (password.equals(BankApplication.map.get(number))) {
-						
+
 						// Set new Password
 						System.out.print("Enter new password: ");
 						password = sc.next();
-	
+
 						// Update old data
 						BankApplication.map.put(BankApplication.ID, password);
 						System.out.println("You successfully changed your password to "
 								+ BankApplication.map.get(BankApplication.ID) + "!");
 						running = false;
 						return;
-					}
-					else {
+					} else {
 						System.out.println("============================");
 						System.out.print("Invalid Login. Please Try Again.\n");
 						System.out.print("============================\nEnter ID: ");
@@ -616,7 +640,7 @@ class BankApplicationMenu extends BankApplication {
 					file.delete();
 				}
 
-				BankApplication.map.remove(BankApplication.ID);		// delete file with ID name
+				BankApplication.map.remove(BankApplication.ID); // delete file with ID name
 				System.exit(0);
 			} else if (userInput.equals("N") || userInput.equals("n")) {
 				return;
@@ -628,7 +652,8 @@ class BankApplicationMenu extends BankApplication {
 		}
 	}
 
-	public static void exit(boolean running, Scanner sc, ArrayList<Double> list, ArrayList<String> dateList, Date date) {
+	public static void exit(boolean running, Scanner sc, ArrayList<Double> list, ArrayList<String> dateList,
+			Date date) {
 		System.out.println("============================");
 		System.out.println("Want to save before exitting? (Y or N)");
 		System.out.println("============================");
