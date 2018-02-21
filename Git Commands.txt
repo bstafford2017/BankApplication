@@ -1,0 +1,9 @@
+git config --global user.name "bstafford2017"
+git config --global user.email "b.stafford2017@gmail.com"
+
+other commands
+git clone (https://github.com/bstafford2017/BankApplication)
+git add (file names)
+git commit -m "(committed message)
+git push -u origin master
+git remote add origin master (url)
